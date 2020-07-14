@@ -1,57 +1,55 @@
 L.NumberFormatter = {
 	round: function(num, dec, sep) {
-		var res = L.Util.formatNum(num, dec) + "",
+		var res     = L.Util.formatNum(num, dec) + "",
 			numbers = res.split(".");
+
 		if (numbers[1]) {
 			var d = dec - numbers[1].length;
+			
 			for (; d > 0; d--) {
 				numbers[1] += "0";
 			}
+
 			res = numbers.join(sep || ".");
 		}
+
 		return res;
 	},
 
 	toDMS: function(deg) {
-		var d = Math.floor(Math.abs(deg));
-		var minfloat = (Math.abs(deg) - d) * 60;
-		var m = Math.floor(minfloat);
-		var secfloat = (minfloat - m) * 60;
-		var s = Math.round(secfloat);
-		if (s == 60) {
-			m++;
-			s = "00";
-		}
-		if (m == 60) {
-			d++;
-			m = "00";
-		}
-		if (s < 10) {
-			s = "0" + s;
-		}
-		if (m < 10) {
-			m = "0" + m;
-		}
-		var dir = "";
-		if (deg < 0) {
-			dir = "-";
-		}
+		const dir    = (deg < 0) ? "-" : "";
+		var d        = Math.floor(Math.abs(deg)),
+		    minfloat = (Math.abs(deg) - d) * 60,
+		    secfloat = (minfloat - m) * 60,
+		    m        = Math.floor(minfloat),
+			s        = Math.round(secfloat);
+
+			
+		m += (Math.floor(s/60)) ? 1 : 0;
+		d += (Math.floor(m/60)) ? 1 : 0;
+
+		s = ('0' + (s % 60)).slice(-2);
+		m = ('0' + (m % 60)).slice(-2);
+		
 		return ("" + dir + d + "&deg; " + m + "' " + s + "''");
 	},
 
 	createValidNumber: function(num, sep) {
-		if (num && num.length > 0) {
-			var numbers = num.split(sep || ".");
-			try {
-				var numRes = Number(numbers.join("."));
-				if (isNaN(numRes)) {
-					return undefined;
-				}
-				return numRes;
-			} catch (e) {
-				return undefined;
-			}
+		if (!num || num.length == 0) {
+			return undefined;
 		}
-		return undefined;
+
+		var numbers = num.split(sep || ".");
+		var numRes;
+		
+		try {
+			if (isNaN((numRes = Number(numbers.join("."))))) {
+				throw new Error();
+			}
+		} catch (e) {
+			return undefined;
+		}
+
+		return numRes;
 	}
 };
