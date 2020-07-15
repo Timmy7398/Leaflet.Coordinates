@@ -17,16 +17,16 @@ L.NumberFormatter = {
 	},
 
 	toDMS: function(deg) {
-		const dir    = (deg < 0) ? "-" : "";
+		var dir      = (deg < 0) ? "-" : "";
 		var d        = Math.floor(Math.abs(deg)),
 		    minfloat = (Math.abs(deg) - d) * 60,
-		    secfloat = (minfloat - m) * 60,
 		    m        = Math.floor(minfloat),
+		    secfloat = (minfloat - m) * 60,
 			s        = Math.round(secfloat);
 
 			
-		m += (Math.floor(s/60)) ? 1 : 0;
-		d += (Math.floor(m/60)) ? 1 : 0;
+		m += Math.floor(s/60);
+		d += Math.floor(m/60);
 
 		s = ('0' + (s % 60)).slice(-2);
 		m = ('0' + (m % 60)).slice(-2);
@@ -35,7 +35,7 @@ L.NumberFormatter = {
 	},
 
 	createValidNumber: function(num, sep) {
-		if (!num || num.length == 0) {
+		if (!num || num.length === 0) {
 			return undefined;
 		}
 
