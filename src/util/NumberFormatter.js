@@ -38,26 +38,41 @@ L.NumberFormatter = {
 	},
 
 	zoneUTM: function(latLng){
-		const north = ['N','P','Q','R','S','T','U','V','W','X']; // Zones North Equator
-		const south = ['M','L','K','J','H','G','F','E','D','C']; // Zones South Equator
-		const zone  = Math.ceil((Math.round(latLng.lng) + 180) / 6);
+		var north = ['N','P','Q','R','S','T','U','V','W','X']; // Zones North Equator
+		var south = ['M','L','K','J','H','G','F','E','D','C']; // Zones South Equator
+		var zone  = Math.ceil((Math.round(latLng.lng) + 180) / 6);
 		
-		let lat  = Math.round(latLng.lat);
-		let i    = Math.abs((lat - (lat % 8)) / 8);
+		var lat  = Math.round(latLng.lat);
+		var i    = Math.abs((lat - (lat % 8)) / 8);
 
-		return { 
-			zone: zone, 
-			part: (lat > 0) ? north[i] : south[i],
-		}
-		 
+		var result = {
+			zone: zone
+		};
+		result.part = (lat > 0) ? north[i] : south[i]; 
+		
+		return result;
 	},
 
 	toUTM: function(latLng) {
-		const zone  = this.zoneUTM(latLng);
-		const south = latLng.lat < 0 ? "+south" : "";
-		const dest  = '+proj=utm +zone='+zone.zone+' ' + south + ' +datum=WGS84 +units=m +no_defs';
+		var zone  = this.zoneUTM(latLng);
+		var south = latLng.lat < 0 ? "+south" : "";
+		var dest  = '+proj=utm +zone='+zone.zone+' ' + south + ' +datum=WGS84 +units=m +no_defs';
+		var result = Object.assign(zone, {proj: proj4['default'](src,dest,[lng,lat])});
 
-		return {...zone, ...{proj: proj4['default'](src,dest,[lng,lat])}};
+		return result;
+	},
+
+	toDMM: function(deg, dec) {
+		var dir = deg < 0 ? "-" : "";
+		var d = Math.floor(Math.abs(deg)),
+			m = (Math.abs(deg) - d) * 60;
+
+		m = Math.round(1000000 * m) / 1000000;
+		m = Math.floor(m) == m ? m + ".0" : m.toFixed(dec);
+		
+		d = ('0' + d).slice(-2);
+
+		return ("" + dir + d + "&deg; " + m);
 	},
 
 	createValidNumber: function(num, sep) {

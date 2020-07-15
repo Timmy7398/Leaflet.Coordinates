@@ -19,6 +19,7 @@ L.Control.Coordinates = L.Control.extend({
 		enableUserInput: true,
 		//use Degree-Minute-Second
 		useDMS: false,
+		useDMM: false, 
 		//if true lat-lng instead of lng-lat label ordering is used
 		useLatLngOrder: false,
 		//if true user given coordinates are centered directly
@@ -180,6 +181,8 @@ L.Control.Coordinates = L.Control.extend({
 		var res;
 		if (opts.useDMS) {
 			res = L.NumberFormatter.toDMS(n);
+		} else if(opts.useDMM) {
+			res = L.NumberFormatter.toDMM(n, opts.decimals);
 		} else {
 			res = L.NumberFormatter.round(n, opts.decimals, opts.decimalSeperator);
 		}
